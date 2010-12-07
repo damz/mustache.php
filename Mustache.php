@@ -250,7 +250,10 @@ class Mustache {
 							$this->_popContext();
 						}
 					} else if ($val) {
-						if (is_array($val) || is_object($val)) {
+					  if (is_callable($val)) {
+					    $replace .= call_user_func($val, $content);
+					  }
+						else if (is_array($val) || is_object($val)) {
 							$this->_pushContext($val);
 							$replace .= $this->_renderTemplate($content);
 							$this->_popContext();
@@ -651,7 +654,7 @@ class Mustache {
 	 * @return bool
 	 */
 	protected function _varIsIterable($var) {
-		return $var instanceof Traversable || (is_array($var) && !array_diff_key($var, array_keys(array_keys($var))));
+		return $var instanceof Traversable || (is_array($var) && !is_callable($var) && !array_diff_key($var, array_keys(array_keys($var))));
 	}
 }
 
